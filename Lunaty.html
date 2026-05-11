@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Queen ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:italic,wght@700&family=Quicksand:wght@300;500&display=swap');
+
+        :root {
+            --bg: #0b0205;
+            --primary: #ff85a2;
+            --gold: #d4af37;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #2c0b14 0%, var(--bg) 100%);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+
+        /* အပေါ်ကိုတက်နေတဲ့ ကြယ်နဲ့ အလင်းစက်လေးများ */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            filter: blur(1px);
+            animation: rise var(--duration) infinite linear;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* Wrapper & Envelope */
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 190px;
+            background: #f08080;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            z-index: 5;
+            border-top: 110px solid #ff9aa2;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            transform-origin: top;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* God Level Letter */
+        .letter {
+            position: absolute;
+            bottom: 5px;
+            left: 5%;
+            width: 90%;
+            height: 170px;
+            background: var(--glass);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            transition: 1s all cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            opacity: 0.2;
+            border: 1px solid rgba(255, 133, 162, 0.3);
+        }
+
+        .wrapper.open .letter {
+            transform: translateY(-160px) scale(1.05);
+            opacity: 1;
+            z-index: 15;
+            height: auto;
+            min-height: 300px;
+            box-shadow: 0 15px 40px rgba(255, 133, 162, 0.3);
+        }
+
+        .letter h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--primary);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        .letter p {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        /* Luxury Button */
+        .btn-luxury {
+            margin-top: 80px;
+            padding: 16px 45px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: 0.5s;
+            box-shadow: 0 0 20px rgba(255, 133, 162, 0.2);
+            z-index: 20;
+        }
+
+        .btn-luxury:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 40px rgba(255, 133, 162, 0.6);
+            transform: translateY(-5px);
+        }
+
+        .heart-seal {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 35px;
+            z-index: 8;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            transition: 0.5s;
+        }
+
+        .wrapper.open .heart-seal, .wrapper.open .envelope::before {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .wrapper.open .envelope::before { transform: rotateX(180deg); }
+
+    </style>
+</head>
+<body>
+
+    <audio id="pianoMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="wrapper" id="giftWrapper">
+        <div class="heart-seal">💖</div>
+        <div class="envelope">
+            <div class="letter">
+                <h1>ချစ်ရပါသော အမျိုးသမီးလေး... ✨</h1>
+                <p id="typedText"></p>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-luxury" id="btn" onclick="revealMagic()">နှိပ်လိုက်ပါ ✨</button>
+
+    <script>
+        const message = "ဒီစာလေးကို မြင်ရတဲ့အချိန်မှာ မင်းလေး အရမ်းကို ပျော်ရွှင်နေမယ်လို့ ငါယုံကြည်ပါတယ်။ မင်းဟာ ငါ့ဘဝရဲ့ အမှောင်ထုထဲမှာ ထွန်းလင်းပေးတဲ့ အလှဆုံး လမင်းလေးတစ်စင်းပါပဲ။ မင်းရဲ့ အပြုံးတွေ၊ မင်းရဲ့ စိတ်ထားလေးတွေက ငါ့ကို အမြဲတမ်း ရင်ခုန်စေခဲ့တာပါ။ ဒီနေ့တင်မကဘဲ ရှေ့ဆက်မယ့် နေ့ရက်တိုင်းမှာလည်း မင်းလေးကို အမြဲတမ်း ဂရုစိုက်ပြီး မြတ်နိုးသွားမှာပါ။ မင်းလေးက ငါ့အတွက်တော့ အရာအားလုံးထက် ပိုတန်ဖိုးရှိတဲ့ ဘုရင်မလေးတစ်ပါးပါပဲ။ ❤️💫";
+
+        function revealMagic() {
+            const wrapper = document.getElementById('giftWrapper');
+            const btn = document.getElementById('btn');
+            const music = document.getElementById('pianoMusic');
+            
+            wrapper.classList.add('open');
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+
+            music.play();
+
+            let i = 0;
+            function type() {
+                if (i < message.length) {
+                    document.getElementById('typedText').innerHTML += message.charAt(i);
+                    i++;
+                    setTimeout(type, 55);
+                }
+            }
+            setTimeout(type, 1500);
+        }
+
+        // Professional Star & Glow Effect
+        function initStars() {
+            const container = document.body;
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 4 + 1 + 'px';
+                star.style.width = size;
+                star.style.height = size;
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.setProperty('--duration', Math.random() * 5 + 5 + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                
+                // အဖြူရောင်နဲ့ အပန်းရောင် ကြယ်လေးတွေ ရောထားမယ်
+                if (i % 3 === 0) star.style.background = '#ff85a2';
+                
+                container.appendChild(star);
+            }
+        }
+        initStars();
+    </script>
+</body>
+</html>
